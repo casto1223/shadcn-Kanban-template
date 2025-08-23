@@ -48,15 +48,37 @@ export default function Home() {
     return deadlines.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
   };
 
+  // Map column IDs to their corresponding stage suggestion names
+  const getStageNameFromColumnId = (columnId: string): string => {
+    const columnMap: Record<string, string> = {
+      "new": "New",
+      "negotiation": "Negotiation", 
+      "contract": "Contract",
+      "draft": "Draft",
+      "live": "Live",
+      "paid": "Paid",
+    };
+    return columnMap[columnId] || columnId;
+  };
+
+  // Custom data change handler that updates stage_suggestion when deals move
+  const handleDataChange = (newDeals: Deal[]) => {
+    const updatedDeals = newDeals.map(deal => ({
+      ...deal,
+      stage_suggestion: getStageNameFromColumnId(deal.column)
+    }));
+    setDeals(updatedDeals);
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">
-            YT AI Talent Manager
+            Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Brand Partnership Deals Tracker
+            Brand Deals Tracker
           </p>
         </div>
 
@@ -64,7 +86,7 @@ export default function Home() {
           <KanbanProvider
             columns={initialColumns}
             data={deals}
-            onDataChange={setDeals}
+            onDataChange={handleDataChange}
           >
             {(column) => (
               <KanbanBoard key={column.id} id={column.id}>
