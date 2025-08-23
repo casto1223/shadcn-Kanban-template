@@ -1,0 +1,1 @@
+template for a Kanban board using shadcn/ui components for YT AI Talent Manager app mvp. 
